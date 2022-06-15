@@ -9,7 +9,7 @@ let sourceData = [],
   time = "0";
 
 let popup = new maplibregl.Popup({
-  closeButton: false,
+  closeButton: true,
   closeOnClick: false,
 });
 
@@ -104,8 +104,10 @@ const mapOnLoad = (e) => {
   setInterval(() => {
     updateData({ time, sourceID });
   }, 120000);
-  map.on("mouseenter", layerID, (e) => {
-    map.getCanvas().style.cursor = "pointer";
+  map.on("click", () => {
+    popup.remove();
+  });
+  map.on("click", layerID, (e) => {
     const coordinates = e.features[0].geometry.coordinates.slice();
     const properties = e.features[0].properties;
     const html =
@@ -122,9 +124,11 @@ const mapOnLoad = (e) => {
     }
     popup.setLngLat(coordinates).setHTML(html).addTo(e.target);
   });
+  map.on("mouseenter", layerID, () => {
+    map.getCanvas().style.cursor = "pointer";
+  });
   map.on("mouseleave", layerID, () => {
     map.getCanvas().style.cursor = "";
-    popup.remove();
   });
 };
 
